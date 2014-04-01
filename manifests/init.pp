@@ -1,6 +1,21 @@
 class php::install {
     $phppackages = ['php5-cli', 'php5-sqlite', 'php5-intl', 'php5-curl', 'php5-common', 'php5-dev', 'php5-geoip', 'php5-gmp', 'php5-imagick', 'php5-imap', 'php5-mcrypt', 'php5-tidy', 'php-apc', 'php-pear', 'php5-xdebug', 'php5-gd', 'php5-mysql', 'php5-fpm']
 
+    package { 'python-software-properties':
+      ensure => installed
+    }
+
+    exec { 'add-apt-repository ppa:ondrej/php5':
+        command => '/usr/bin/add-apt-repository ppa:ondrej/php5',
+        require => Package["python-software-properties"],
+    }
+
+    exec { 'apt-get update for latest php':
+        command => '/usr/bin/apt-get update',
+        before => Package[$phppackages],
+        require => Exec['add-apt-repository ppa:ondrej/php5'],
+    }
+
     package { $phppackages: 
         ensure => installed
     }
